@@ -758,8 +758,8 @@ namespace Obloq {
             OBLOQ_WIFI_CONNECTED = true
             basic.showIcon(IconNames.Yes)
 
-        } 
-     
+        }
+  
         return OBLOQ_ERROR_TYPE_IS_SUCCE 
     }
 
