@@ -238,7 +238,7 @@ namespace Obloq {
         item = serial.readString()
         item = serial.readString()
         item = serial.readString()
-        OBLOQ_SERIAL_INIT = true
+        OBLOQ_SERIAL_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
     }
 
     function Obloq_start_connect_http(): void {
@@ -794,10 +794,10 @@ namespace Obloq {
             OBLOQ_IP = item.substr(5, item.length - 6)
             OBLOQ_WIFI_CONNECTED = true
             basic.showIcon(IconNames.Yes)
-            return OBLOQ_ERROR_TYPE_IS_SUCCE 
+
         }
 
-       
+        return OBLOQ_ERROR_TYPE_IS_SUCCE 
     }
 
     /**
