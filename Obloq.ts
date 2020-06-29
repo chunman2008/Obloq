@@ -746,7 +746,7 @@ namespace Obloq {
             if (!OBLOQ_SERIAL_INIT) {
                 Obloq_serial_init()
             }
-  
+            basic.showString("connected ")
             let item = "test"
             obloqWriteString("|2|1|" + OBLOQ_WIFI_SSID + "," + OBLOQ_WIFI_PASSWORD + "|\r") //Send wifi account and password instructions
             item = serial.readUntil("\r")
@@ -758,7 +758,7 @@ namespace Obloq {
             basic.showIcon(IconNames.Yes)
 
         }
-        basic.showString("12")
+        basic.showString("connected ")
         return OBLOQ_ERROR_TYPE_IS_SUCCE 
     }
 
