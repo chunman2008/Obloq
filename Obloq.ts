@@ -929,9 +929,7 @@ namespace Obloq {
     }*/
 
     function Obloq_connect_mqtt(): void {
-        if (!OBLOQ_SERIAL_INIT) {
-            Obloq_serial_init()
-        }
+    
         obloqWriteString("|4|1|1|" + OBLOQ_MQTT_SERVER + "|" + OBLOQ_MQTT_PORT + "|" + OBLOQ_MQTT_ID + "|" + OBLOQ_MQTT_PWD + "|\r")
     }
 
@@ -1340,7 +1338,7 @@ namespace Obloq {
                 } break
             }
         }
-
+        Obloq_connect_mqtt()
         OBLOQ_MQTT_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
         OBLOQ_WORKING_MODE_IS_STOP = OBLOQ_BOOL_TYPE_IS_FALSE
     }
