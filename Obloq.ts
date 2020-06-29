@@ -794,9 +794,10 @@ namespace Obloq {
             OBLOQ_IP = item.substr(5, item.length - 6)
             OBLOQ_WIFI_CONNECTED = true
             basic.showIcon(IconNames.Yes)
+            return OBLOQ_ERROR_TYPE_IS_SUCCE 
         }
 
-        return OBLOQ_ERROR_TYPE_IS_SUCCE 
+       
     }
 
     /**
