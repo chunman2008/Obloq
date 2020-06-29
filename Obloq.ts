@@ -302,7 +302,7 @@ namespace Obloq {
  
             }
         
-
+        Obloq_connect_mqtt()
         OBLOQ_MQTT_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
         OBLOQ_WORKING_MODE_IS_STOP = OBLOQ_BOOL_TYPE_IS_FALSE
     }
