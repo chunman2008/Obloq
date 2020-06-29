@@ -746,7 +746,7 @@ namespace Obloq {
             if (!OBLOQ_SERIAL_INIT) {
                 Obloq_serial_init()
             }
-            basic.showString("wifi")
+            basic.showString("entry wifi !")
             let item = "test"
             obloqWriteString("|2|1|" + OBLOQ_WIFI_SSID + "," + OBLOQ_WIFI_PASSWORD + "|\r") //Send wifi account and password instructions
             item = serial.readUntil("\r")
@@ -758,7 +758,7 @@ namespace Obloq {
             basic.showIcon(IconNames.Yes)
 
         }
-        basic.showString("wifi")
+        basic.showString("logout wifi !")
         return OBLOQ_ERROR_TYPE_IS_SUCCE 
     }
 
@@ -1082,12 +1082,14 @@ namespace Obloq {
     //% blockId=Obloq_mqtt_send_message
     //% block="pubLish %mess |to topic_0"
     export function Obloq_mqtt_send_message(mess: string): void {
-        Obloq_serial_init()
-    
-
+        while (OBLOQ_WORKING_MODE_IS_STOP) { basic.pause(20) }
+        if (!OBLOQ_MQTT_INIT) {
+            return
+        }
+        if (!OBLOQ_SERIAL_INIT) {
+            Obloq_serial_init()
+        }
         obloqWriteString("|4|1|3|" + OBLOQ_MQTT_TOPIC[0][0] + "|" + mess + "|\r")
-
-         basic.showIcon(IconNames.Yes)
     }
 
     /**
@@ -1124,8 +1126,9 @@ namespace Obloq {
     //% blockId=Obloq_subTopic
     //% advanced=true
     function Obloq_subTopic(topic: string): void {
-
+        if (!OBLOQ_SERIAL_INIT) {
             Obloq_serial_init()
+        }
         obloqWriteString("|4|1|2|" + topic + "|\r")
     }
 
