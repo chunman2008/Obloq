@@ -61,6 +61,11 @@ namespace Obloq {
     let OBLOQ_WIFI_SSID = OBLOQ_STR_TYPE_IS_NONE
     let OBLOQ_WIFI_PASSWORD = OBLOQ_STR_TYPE_IS_NONE
     let OBLOQ_WIFI_IP = "0.0.0.0"
+
+    let OBLOQ_IP = ""
+    let cityID = ""
+    let weatherKey = ""
+    let aa = 0
     //mqtt
     let OBLOQ_MQTT_PORT = 0
     let OBLOQ_MQTT_SERVER = OBLOQ_STR_TYPE_IS_NONE
@@ -214,10 +219,8 @@ namespace Obloq {
     }
 
     function Obloq_serial_init(): void {
-        let item = OBLOQ_STR_TYPE_IS_NONE
-        //First send data through usb, avoid the first data scrambled.
-        obloqWriteString("123")
-        item = serial.readString()
+      obloqWriteString("123")
+        let item = serial.readString()
         item = serial.readString()
         item = serial.readString()
         serial.redirect(
@@ -225,14 +228,17 @@ namespace Obloq {
             OBLOQ_SERIAL_RX,
             BaudRate.BaudRate9600
         )
-        obloqSetTxBufferSize(100)
-        obloqSetRxBufferSize(100)
+        serial.setRxBufferSize(200)
+        serial.setTxBufferSize(100)
         obloqWriteString("\r")
         item = serial.readString()
-        OBLOQ_SERIAL_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
-        obloqClearRxBuffer()
-        obloqClearTxBuffer()
-        onEvent()
+        obloqWriteString("|1|1|\r")
+        item = serial.readUntil("\r")
+        item = serial.readString()
+        item = serial.readString()
+        item = serial.readString()
+        item = serial.readString()
+        OBLOQ_SERIAL_INIT = true
     }
 
     function Obloq_start_connect_http(): void {
@@ -282,75 +288,6 @@ namespace Obloq {
             OBLOQ_MQTT_PORT = OBLOQ_MQTT_USER_IOT_PORT
         }
 
-        let ret = 0
-        if (connectStart == "connect wifi") {
-            ret = Obloq_connect_wifi()
-            if (OBLOQ_DEBUG) { basic.showNumber(ret) }
-            switch (ret) {
-                case OBLOQ_ERROR_TYPE_IS_SUCCE: {
-                    basic.showIcon(IconNames.Yes)
-                    basic.pause(500)
-                    basic.clearScreen()
-                    OBLOQ_WIFI_CONNECTED = OBLOQ_BOOL_TYPE_IS_TRUE
-                } break
-                case OBLOQ_ERROR_TYPE_IS_WIFI_CONNECT_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "wifi connect timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_WIFI_CONNECT_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "wifi connect failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_ERR: {
-                    basic.showNumber(ret)
-                    basic.showIcon(IconNames.No)
-                    while (OBLOQ_BOOL_TYPE_IS_TRUE) { basic.pause(10000) }
-                } break
-            }
-        }
-        if (connectStart == "connect wifi" || connectStart == "connect mqtt") {
-            ret = Obloq_connect_iot();
-            switch (ret) {
-                case OBLOQ_ERROR_TYPE_IS_SUCCE: {
-                    basic.showIcon(IconNames.Yes)
-                    basic.pause(500)
-                    basic.clearScreen()
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_ERR: {
-                    basic.showNumber(ret)
-                    basic.showIcon(IconNames.No)
-                    while (OBLOQ_BOOL_TYPE_IS_TRUE) { basic.pause(10000) }
-                } break
-            }
-        }
         OBLOQ_MQTT_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
         OBLOQ_WORKING_MODE_IS_STOP = OBLOQ_BOOL_TYPE_IS_FALSE
     }
@@ -775,29 +712,20 @@ namespace Obloq {
     }*/
 
     function Obloq_connect_wifi(): number {
-        if (OBLOQ_WIFI_CONNECTED == OBLOQ_BOOL_TYPE_IS_TRUE) {
-            return OBLOQ_ERROR_TYPE_IS_SUCCE
-        }
-
-        OBLOQ_WIFI_ICON = 1
-        let timeout = 10000  //Set the default timeout period 10s.
-        timeout = timeout < 100 ? 100 : timeout //Timeout minimum resolution 100ms
-
-        let timeout_count_max = timeout / 100
-        let timeout_count_now = 0
-        if (OBLOQ_WIFI_CONNECT_FIRST) {
-            //serial init
+        if (OBLOQ_SERIAL_INIT) {
             if (!OBLOQ_SERIAL_INIT) {
                 Obloq_serial_init()
             }
-            //show icon
-            Obloq_wifi_icon_display()
-            for (let i = 0; i < 3; i++) {
-                obloqWriteString("|1|1|\r")
-                basic.pause(100)
-            }
+            let item = "test"
             obloqWriteString("|2|1|" + OBLOQ_WIFI_SSID + "," + OBLOQ_WIFI_PASSWORD + "|\r") //Send wifi account and password instructions
-            OBLOQ_WIFI_CONNECT_FIRST = OBLOQ_BOOL_TYPE_IS_FALSE
+            item = serial.readUntil("\r")
+            while (item.indexOf("|2|3|") < 0) {
+                item = serial.readUntil("\r")
+            }
+            OBLOQ_IP = item.substr(5, item.length - 6)
+            OBLOQ_WIFI_CONNECTED = true
+            basic.showIcon(IconNames.Yes)
+        }
         }
 
         while (OBLOQ_BOOL_TYPE_IS_TRUE) {
@@ -1400,45 +1328,7 @@ namespace Obloq {
                 } break
             }
         }
-        if (connectStart == "connect wifi" || connectStart == "connect mqtt") {
-            ret = Obloq_connect_iot();
-            switch (ret) {
-                case OBLOQ_ERROR_TYPE_IS_SUCCE: {
-                    basic.showIcon(IconNames.Yes)
-                    basic.pause(500)
-                    basic.clearScreen()
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_ERR: {
-                    basic.showNumber(ret)
-                    basic.showIcon(IconNames.No)
-                    while (OBLOQ_BOOL_TYPE_IS_TRUE) { basic.pause(10000) }
-                } break
-            }
-        }
+   
         OBLOQ_MQTT_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
         OBLOQ_WORKING_MODE_IS_STOP = OBLOQ_BOOL_TYPE_IS_FALSE
     }
