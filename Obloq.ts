@@ -318,45 +318,7 @@ namespace Obloq {
                 } break
             }
         }
-        if (connectStart == "connect wifi" || connectStart == "connect mqtt") {
-            ret = Obloq_connect_iot();
-            switch (ret) {
-                case OBLOQ_ERROR_TYPE_IS_SUCCE: {
-                    basic.showIcon(IconNames.Yes)
-                    basic.pause(500)
-                    basic.clearScreen()
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_ERR: {
-                    basic.showNumber(ret)
-                    basic.showIcon(IconNames.No)
-                    while (OBLOQ_BOOL_TYPE_IS_TRUE) { basic.pause(10000) }
-                } break
-            }
-        }
+
         OBLOQ_MQTT_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
         OBLOQ_WORKING_MODE_IS_STOP = OBLOQ_BOOL_TYPE_IS_FALSE
     }
@@ -1380,45 +1342,7 @@ namespace Obloq {
                 } break
             }
         }
-        if (connectStart == "connect wifi" || connectStart == "connect mqtt") {
-            ret = Obloq_connect_iot();
-            switch (ret) {
-                case OBLOQ_ERROR_TYPE_IS_SUCCE: {
-                    basic.showIcon(IconNames.Yes)
-                    basic.pause(500)
-                    basic.clearScreen()
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_SUBTOPIC_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt subtopic failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_TIMEOUT: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect timeout"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_MQTT_CONNECT_FAILURE: {
-                    basic.showIcon(IconNames.No)
-                    basic.pause(500)
-                    OBLOQ_WRONG_TYPE = "mqtt connect failure"
-                    return
-                } break
-                case OBLOQ_ERROR_TYPE_IS_ERR: {
-                    basic.showNumber(ret)
-                    basic.showIcon(IconNames.No)
-                    while (OBLOQ_BOOL_TYPE_IS_TRUE) { basic.pause(10000) }
-                } break
-            }
-        }
+
         OBLOQ_MQTT_INIT = OBLOQ_BOOL_TYPE_IS_TRUE
         OBLOQ_WORKING_MODE_IS_STOP = OBLOQ_BOOL_TYPE_IS_FALSE
     }
